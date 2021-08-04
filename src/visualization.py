@@ -3,7 +3,7 @@ from matplotlib.ticker import MultipleLocator, AutoLocator, MaxNLocator
 import seaborn as sns
 import numpy as np
 
-def waterfall_spectrogram(ax, freq, time, sxx, title='', cmap='jet', sxx_unit='dB', show_rpm=False):
+def waterfall_spectrogram(ax, freq, time, sxx, title='', cmap='jet', cbar_unit='dB', cbar_label='Magnitude', show_rpm=False):
     if show_rpm:
         freq *= 60
         xlabel = "Rotation (rpm)"
@@ -34,8 +34,8 @@ def waterfall_spectrogram(ax, freq, time, sxx, title='', cmap='jet', sxx_unit='d
     ax.yaxis.set_minor_locator(MaxNLocator(2))
 
     if cmap is not None:
-        cbar = plt.colorbar(cmap)
-        cbar.ax.set_ylabel('Magnitude (%s)' % sxx_unit, rotation=270)
+        cbar = plt.colorbar(cmap, ax=ax)
+        cbar.ax.set_ylabel(f"{cbar_label} {cbar_unit}", rotation=270)
     
         return ax, cbar
     return ax
