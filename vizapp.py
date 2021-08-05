@@ -4,11 +4,9 @@ import pandas as pd
 import tensorflow as tf
 from unet import custom_objects
 from unet.utils import crop_to_shape
-from load_utils import load_4classes, load_shipsear, load_info, load_file_as_lofar
+from src.load_utils import load_info, load_file_as_lofar
 import matplotlib.pyplot as plt
 from pathlib import Path
-import sys
-sys.path.append('../../')
 from src.visualization import waterfall_spectrogram
 
 @st.cache
@@ -26,7 +24,6 @@ def filter_dataset(metadata):
         metadata = metadata.loc[metadata[meta] == meta_value]
     return metadata.index.values[0]
   
-# @st.cache
 def tile_dataset(tile_size, hop, data, freq, time):
     size = sxx.shape[0]
     run = list()
@@ -127,10 +124,8 @@ if plot_type == plots[0]:
 elif plot_type == plots[1]:
     passthrough = st.sidebar.slider("Passthrough", .0, 1., .0)
     fig, ax = plt.subplots(ncols=1, figsize=(8,4))
-#     original_image[~run_pred.astype(bool)] = passthrough*original_image[~run_pred.astype(bool)]
-#     waterfall_spectrogram(ax, freq, time, original_image, title='', cmap='Greys', cbar_unit='dB', show_rpm=False)
-    ax.imshow(original_image, cmap="Greys", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
-    ax.imshow(run_pred, alpha=passthrough, cmap="jet", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
+    ax.imshow(original_image[::-1], cmap="Greys", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
+    ax.imshow(run_pred[::-1], alpha=passthrough, cmap="jet", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
 
 else:
     raise ValueError("Invalid plot type")
