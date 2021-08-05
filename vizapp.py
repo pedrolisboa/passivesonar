@@ -118,9 +118,9 @@ if plot_type == plots[0]:
     
     fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(14,8))
 
-    _, cbar = waterfall_spectrogram(ax1, freq, time, original_image, title='', cmap='jet', cbar_unit='dB', show_rpm=False)
+    _, cbar = waterfall_spectrogram(ax1, freq, time[::], original_image[::], title='', cmap='jet', cbar_unit='dB', show_rpm=False)
     cbar.remove()
-    _, cbar = waterfall_spectrogram(ax2, freq, time, run_pred, title='', cmap='inferno', cbar_unit='dB', show_rpm=False)
+    _, cbar = waterfall_spectrogram(ax2, freq, time[::], run_pred[::], title='', cmap='inferno', cbar_unit='dB', show_rpm=False)
     cbar.remove()
     # ax1.imshow(original_image, cmap="jet")
     # ax2.imshow(run_pred, cmap="inferno")
@@ -129,8 +129,8 @@ elif plot_type == plots[1]:
     fig, ax = plt.subplots(ncols=1, figsize=(8,4))
 #     original_image[~run_pred.astype(bool)] = passthrough*original_image[~run_pred.astype(bool)]
 #     waterfall_spectrogram(ax, freq, time, original_image, title='', cmap='Greys', cbar_unit='dB', show_rpm=False)
-    ax.imshow(original_image, cmap="Greys", extent=[time[0], time[1], freq[0], freq[1]], aspect="auto")
-    ax.imshow(run_pred, alpha=passthrough, cmap="jet", extent=[time[0], time[1], freq[0], freq[1]], aspect="auto")
+    ax.imshow(original_image, cmap="Greys", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
+    ax.imshow(run_pred, alpha=passthrough, cmap="jet", extent=[freq[0], freq[-1], time[0], time[-1]], aspect="auto")
 
 else:
     raise ValueError("Invalid plot type")

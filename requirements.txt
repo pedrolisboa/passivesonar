@@ -1,6 +1,2 @@
-torch
-librosa
-numpy
-scipy
-xarray
-
+tensorflow==2.3.2
+soundfile

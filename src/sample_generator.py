@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-from modified_lofar import lofar
+from src.features.signal import lofar
 
 
 def gen_sim_lofargram(seconds, sample_rate, return_axis=False):
@@ -16,7 +16,7 @@ def gen_sim_lofargram(seconds, sample_rate, return_axis=False):
     y = x  + noise
     y = y[:, np.newaxis] 
 
-    sxx, freq, time = lofar(y, sr=sample_rate, final_sr=7350, use_tpsw=True, tonal_threshold=-4)
+    sxx, freq, time = lofar(y, sr=sample_rate, final_sr=7350, use_tpsw=True, tonal_threshold=-4, return_onesided=False)
     
     sxx = sxx[:, (512-21):, :] # padding for unet
     freq = freq[(512-21):]
@@ -33,6 +33,7 @@ def gen_sim_lofargram(seconds, sample_rate, return_axis=False):
     if return_axis:
         return sxx, full_mask, freq, time
     return sxx, full_mask
+
 
 def frequency_band_gen(freq_array=None):
     #base_width = np.random.uniform(0.005, 0.010)
@@ -91,6 +92,7 @@ def background_noise(seconds, sample_rate):
     noise *= noise_amplitude
     
     return noise
+
 def fftnoise(f):
     f = np.array(f, dtype='complex')
     Np = (len(f) - 1) // 2

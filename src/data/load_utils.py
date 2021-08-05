@@ -7,9 +7,7 @@ import numpy as np
 import scipy
 
 import sys
-sys.path.append('../../')
-from src.data.offline import load_raw_data
-from torch.utils.data import Dataset
+from offline import load_raw_data
 
 def load_4classes(use_tpsw=True, thres=-4):
     time_data = load_raw_data('./../../acoustic_lane/4classes', run_pattern=r'[0-9]+$')

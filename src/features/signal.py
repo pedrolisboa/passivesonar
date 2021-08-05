@@ -58,6 +58,8 @@ def tpsw(signal, npts=None, n=None, p=None, a=None):
     return mx
 
 
+
+
 def lofar(data, sr, 
           final_sr, 
           nfft=1024, 
@@ -66,6 +68,7 @@ def lofar(data, sr,
           max_freq=None, 
           tonal_threshold=-4, # dB
           use_tpsw=True,
+          return_onesided=True,
           **tpsw_args):
 
     if not isinstance(data, (np.ndarray, xr.DataArray)):
@@ -90,12 +93,11 @@ def lofar(data, sr,
                                   noverlap=noverlap,
                                   nfft=nfft,
                                   fs=sr,
-                                  detrend=False,
+                                  detrend='constant',
+                                  return_onesided=return_onesided,
                                   axis=time_axis,
                                   scaling='spectrum',
                                   mode='magnitude')
-    
-    sxx = np.swapaxes(sxx, channel_axis, -1)
     
     # win = np.hanning(nfft)[None, :, None]
     # sxx = np.fft.rfft(chunk_stack*win, axis=1)/nfft
@@ -104,9 +106,9 @@ def lofar(data, sr,
     # sxx = sxx / tpsw(sxx, **tpsw_args)
     # sxx = 20*np.log10(sxx)
 
-    # freq = np.fft.fftfreq(nfft, d=1/fs)
+    #freq = np.fft.fftfreq(nfft, d=1/sr)
     
-    # return sxx, freq
+    sxx = np.swapaxes(sxx, channel_axis, -1)
                                 
     sxx = np.absolute(sxx)
 
@@ -121,13 +123,16 @@ def lofar(data, sr,
     if tonal_threshold is not None:
         sxx[sxx < tonal_threshold] = 0
 
-    if max_freq is not None:
-        spectrum_bins_left = freq <= max_freq
-
-        sxx = sxx[spectrum_bins_left, :]
-        freq = freq[spectrum_bins_left]
-
     sxx = np.swapaxes(sxx, 0, 1) # swap time and freq axis
+    
+    if not return_onesided:
+        tmp = freq[:nfft//2].copy()
+        freq[:nfft//2] = freq[nfft//2:]
+        freq[nfft//2:] = tmp[::].copy()
+
+        tmp = sxx[:, :nfft//2, :].copy()
+        sxx[:, :nfft//2, :] = sxx[:, nfft//2:, :]
+        sxx[:, nfft//2:, :] = tmp.copy()
 
     return sxx, freq, time
 
